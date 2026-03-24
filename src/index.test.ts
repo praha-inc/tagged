@@ -1,13 +1,35 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { greeting } from './index';
+import { Tagged } from './index.js';
 
-describe('greeting', () => {
-  it('logs "Hello, World!" to the console', () => {
-    const consoleSpy = vi.spyOn(console, 'log');
+describe('Tagged', () => {
+  it('should return an object with a $tag field', () => {
+    const User = Tagged({
+      tag: 'User',
+      fields: Tagged.fields<{ name: string; age: number }>(),
+    });
 
-    greeting();
+    const user = User({
+      name: 'Alice',
+      age: 30,
+    });
 
-    expect(consoleSpy).toHaveBeenCalledWith('Hello, World!');
+    expect(user).toEqual({
+      $tag: 'User',
+      name: 'Alice',
+      age: 30,
+    });
+  });
+
+  it('should create an object even with empty fields', () => {
+    const Empty = Tagged({
+      tag: 'Empty',
+    });
+
+    const empty = Empty();
+
+    expect(empty).toEqual({
+      $tag: 'Empty',
+    });
   });
 });
